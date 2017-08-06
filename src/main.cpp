@@ -49,17 +49,17 @@ Eigen::VectorXd polyfit(Eigen::VectorXd xvals, Eigen::VectorXd yvals,
     assert(xvals.size() == yvals.size());
     assert(order >= 1 && order <= xvals.size() - 1);
     Eigen::MatrixXd A(xvals.size(), order + 1);
-    
+
     for (int i = 0; i < xvals.size(); i++) {
         A(i, 0) = 1.0;
     }
-    
+
     for (int j = 0; j < xvals.size(); j++) {
         for (int i = 0; i < order; i++) {
             A(j, i + 1) = A(j, i) * xvals(j);
         }
     }
-    
+
     auto Q = A.householderQr();
     auto result = Q.solve(yvals);
     return result;
@@ -91,7 +91,7 @@ int main() {
                     double py = j[1]["y"];
                     double psi = j[1]["psi"];
                     double v = j[1]["speed"];
-                    
+
                     /*
                      * TODO: Calculate steering angle and throttle using MPC.
                      *
@@ -126,8 +126,8 @@ int main() {
 
                     msgJson["next_x"] = next_x_vals;
                     msgJson["next_y"] = next_y_vals;
-                    
-                    
+
+
                     auto msg = "42[\"steer\"," + msgJson.dump() + "]";
                     std::cout << msg << std::endl;
                     // Latency
@@ -149,7 +149,7 @@ int main() {
             }
         }
     });
-    
+
     // We don't need this since we're not using HTTP but if it's removed the
     // program
     // doesn't compile :-(
@@ -163,17 +163,17 @@ int main() {
             res->end(nullptr, 0);
         }
     });
-    
+
     h.onConnection([&h](uWS::WebSocket<uWS::SERVER> ws, uWS::HttpRequest req) {
         std::cout << "Connected!!!" << std::endl;
     });
-    
+
     h.onDisconnection([&h](uWS::WebSocket<uWS::SERVER> ws, int code,
                            char *message, size_t length) {
         ws.close();
         std::cout << "Disconnected" << std::endl;
     });
-    
+
     int port = 4567;
     if (h.listen(port)) {
         std::cout << "Listening to port " << port << std::endl;

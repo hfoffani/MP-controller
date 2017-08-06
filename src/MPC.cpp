@@ -26,7 +26,7 @@ public:
     // Fitted polynomial coefficients
     Eigen::VectorXd coeffs;
     FG_eval(Eigen::VectorXd coeffs) { this->coeffs = coeffs; }
-    
+
     typedef CPPAD_TESTVECTOR(AD<double>) ADvector;
     void operator()(ADvector& fg, const ADvector& vars) {
         // TODO: implement MPC
@@ -46,7 +46,7 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
     bool ok = true;
     size_t i;
     typedef CPPAD_TESTVECTOR(double) Dvector;
-    
+
     // TODO: Set the number of model variables (includes both states and inputs).
     // For example: If the state is a 4 element vector, the actuators is a 2
     // element vector and there are 10 timesteps. The number of variables is:
@@ -55,18 +55,18 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
     size_t n_vars = 0;
     // TODO: Set the number of constraints
     size_t n_constraints = 0;
-    
+
     // Initial value of the independent variables.
     // SHOULD BE 0 besides initial state.
     Dvector vars(n_vars);
     for (int i = 0; i < n_vars; i++) {
         vars[i] = 0;
     }
-    
+
     Dvector vars_lowerbound(n_vars);
     Dvector vars_upperbound(n_vars);
     // TODO: Set lower and upper limits for variables.
-    
+
     // Lower and upper limits for the constraints
     // Should be 0 besides initial state.
     Dvector constraints_lowerbound(n_constraints);
@@ -75,10 +75,10 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
         constraints_lowerbound[i] = 0;
         constraints_upperbound[i] = 0;
     }
-    
+
     // object that computes objective and constraints
     FG_eval fg_eval(coeffs);
-    
+
     //
     // NOTE: You don't have to worry about these options
     //
@@ -96,23 +96,23 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
     // NOTE: Currently the solver has a maximum time limit of 0.5 seconds.
     // Change this as you see fit.
     options += "Numeric max_cpu_time          0.5\n";
-    
+
     // place to return solution
     CppAD::ipopt::solve_result<Dvector> solution;
-    
+
     // solve the problem
     CppAD::ipopt::solve<Dvector, FG_eval>(
                                           options, vars, vars_lowerbound, vars_upperbound,
                                           constraints_lowerbound,
                                           constraints_upperbound, fg_eval, solution);
-    
+
     // Check some of the solution values
     ok &= solution.status == CppAD::ipopt::solve_result<Dvector>::success;
-    
+
     // Cost
     auto cost = solution.obj_value;
     std::cout << "Cost " << cost << std::endl;
-    
+
     // TODO: Return the first actuator values. The variables can be accessed with
     // `solution.x[i]`.
     //
