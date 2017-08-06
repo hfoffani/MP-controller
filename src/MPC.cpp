@@ -47,12 +47,12 @@ public:
 
     typedef CPPAD_TESTVECTOR(AD<double>) ADvector;
     void operator()(ADvector& fg, const ADvector& vars) {
-        // TODO: implement MPC
+        // : implement MPC
         // `fg` a vector of the cost constraints, `vars` is a vector of variable values (state & actuators)
         // NOTE: You'll probably go back and forth between this function and
         // the Solver function below.
 
-        fg[0] = 0;  // the cost function
+        fg[0] = 0;  // the cost function is at fg[0]
 
         // add cost proportional to square of deviation of reference values.
         for (int t = 0; t < N; t++) {
@@ -109,7 +109,7 @@ public:
             AD<double> v1 = vars[v_start + t];
             AD<double> cte1 = vars[cte_start + t];
             AD<double> epsi1 = vars[epsi_start + t];
-            
+
             // The state at time t.
             AD<double> x0 = vars[x_start + t - 1];
             AD<double> y0 = vars[y_start + t - 1];
@@ -117,14 +117,14 @@ public:
             AD<double> v0 = vars[v_start + t - 1];
             AD<double> cte0 = vars[cte_start + t - 1];
             AD<double> epsi0 = vars[epsi_start + t - 1];
-            
+
             // Only consider the actuation at time t.
             AD<double> delta0 = vars[delta_start + t - 1];
             AD<double> a0 = vars[a_start + t - 1];
-            
+
             AD<double> f0 = coeffs[0] + coeffs[1] * x0;
             AD<double> psides0 = CppAD::atan(coeffs[1]);
-            
+
             // Here's `x` to get you started.
             // The idea here is to constraint this value to be 0.
             // Recall the equations for the model:
