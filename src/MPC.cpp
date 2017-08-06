@@ -200,6 +200,11 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
     Dvector constraints_lowerbound(n_constraints);
     Dvector constraints_upperbound(n_constraints);
 
+    for (int i = 0; i < n_constraints; i++) {
+        constraints_lowerbound[i] = 0;
+        constraints_upperbound[i] = 0;
+    }
+
     constraints_lowerbound[x_start] = x;
     constraints_lowerbound[y_start] = y;
     constraints_lowerbound[psi_start] = psi;
