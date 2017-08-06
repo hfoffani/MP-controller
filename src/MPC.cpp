@@ -157,14 +157,21 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
     size_t i;
     typedef CPPAD_TESTVECTOR(double) Dvector;
 
-    // TODO: Set the number of model variables (includes both states and inputs).
+    double x = state[0];
+    double y = state[1];
+    double psi = state[2];
+    double v = state[3];
+    double cte = state[4];
+    double epsi = state[5];
+
+    // : Set the number of model variables (includes both states and inputs).
     // For example: If the state is a 4 element vector, the actuators is a 2
     // element vector and there are 10 timesteps. The number of variables is:
     //
     // 4 * 10 + 2 * 9
-    size_t n_vars = 0;
-    // TODO: Set the number of constraints
-    size_t n_constraints = 0;
+    size_t n_vars = N * state.size() + (N - 1) * 2;
+    // : Set the number of constraints
+    size_t n_constraints = N * state.size();
 
     // Initial value of the independent variables.
     // SHOULD BE 0 besides initial state.
@@ -175,16 +182,37 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
 
     Dvector vars_lowerbound(n_vars);
     Dvector vars_upperbound(n_vars);
-    // TODO: Set lower and upper limits for variables.
+    // : Set lower and upper limits for variables.
+
+    // for non-actuators, no bounds
+    for (int i = 0; i < delta_start; i++) {
+        vars_lowerbound[i] = -1e10;
+        vars_upperbound[i] = 1e10;
+    }
+    // for the actuators, special values
+    vars_lowerbound[delta_start] = - Lf * 25 * M_PI / 180;
+    vars_upperbound[delta_start] = Lf * 25 * M_PI / 180;
+    vars_lowerbound[a_start] = -1.0;
+    vars_upperbound[a_start] = 1.0;
 
     // Lower and upper limits for the constraints
     // Should be 0 besides initial state.
     Dvector constraints_lowerbound(n_constraints);
     Dvector constraints_upperbound(n_constraints);
-    for (int i = 0; i < n_constraints; i++) {
-        constraints_lowerbound[i] = 0;
-        constraints_upperbound[i] = 0;
-    }
+
+    constraints_lowerbound[x_start] = x;
+    constraints_lowerbound[y_start] = y;
+    constraints_lowerbound[psi_start] = psi;
+    constraints_lowerbound[v_start] = v;
+    constraints_lowerbound[cte_start] = cte;
+    constraints_lowerbound[epsi_start] = epsi;
+
+    constraints_upperbound[x_start] = x;
+    constraints_upperbound[y_start] = y;
+    constraints_upperbound[psi_start] = psi;
+    constraints_upperbound[v_start] = v;
+    constraints_upperbound[cte_start] = cte;
+    constraints_upperbound[epsi_start] = epsi;
 
     // object that computes objective and constraints
     FG_eval fg_eval(coeffs);
