@@ -92,14 +92,40 @@ int main() {
                     double psi = j[1]["psi"];
                     double v = j[1]["speed"];
 
+                    // convert coordinates to car reference.
+                    // because the car has a main direction of move (forward)
+                    // it makes the polynomial fit easier and faster to calculate.
+                    for (int i = 0; i < ptsx.size(); i++) {
+                        auto shift_x = ptsx[i] - px;
+                        auto shift_y = ptsy[i] - py;
+                        ptsx[i] = shift_x * cos(0-psi) - shift_y * sin(0-psi);
+                        ptsy[i] = shift_x * sin(0-psi) - shift_y * cos(0-psi);
+                    }
+
+                    // convert from a vector of doubles to a Map of Eigen Vectors.
+                    Eigen::Map<Eigen::VectorXd> pstx_transform(&ptsx[0], 6);
+                    Eigen::Map<Eigen::VectorXd> psty_transform(&ptsy[0], 6);
+
+                    // fit the poliynomial and get the coefficients.
+                    auto coeffs = polyfit(pstx_transform, psty_transform, 3);
+
+                    // calculate cte and psi
+                    // the true value of the error is the distance to the poly curve and
+                    // this is a simplification.
+                    auto cte = polyeval(coeffs, 0);
+                    // in car coordinates psi and px are zero, so epsi gets simplified.
+                    auto epsi = -atan(coeffs[1]);
+
                     /*
                      * TODO: Calculate steering angle and throttle using MPC.
                      *
                      * Both are in between [-1, 1].
                      *
                      */
-                    double steer_value;
-                    double throttle_value;
+
+                    // current state
+                    double steer_value = j[1]["steering_angle"];
+                    double throttle_value = j[1]["throttle"];
 
                     json msgJson;
                     // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
