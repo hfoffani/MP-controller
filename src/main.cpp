@@ -117,15 +117,25 @@ int main() {
                     auto epsi = -atan(coeffs[1]);
 
                     /*
-                     * TODO: Calculate steering angle and throttle using MPC.
+                     * : Calculate steering angle and throttle using MPC.
                      *
-                     * Both are in between [-1, 1].
+                     * Both are in between [-1, 1]. XXX
                      *
                      */
 
                     // current state
                     double steer_value = j[1]["steering_angle"];
                     double throttle_value = j[1]["throttle"];
+                    Eigen::VectorXd state(6);
+                    state << 0, 0, 0, v, cte, epsi;
+
+                    // solve the polynomial
+                    auto mpc_vars = mpc.Solve(state, coeffs);
+
+                    // actuators
+                    const double Lf = 2.67;
+                    steer_value = mpc_vars[0]/(deg2rad(25)*Lf);
+                    throttle_value = mpc_vars[1];
 
                     json msgJson;
                     // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
@@ -165,7 +175,7 @@ int main() {
                     //
                     // NOTE: REMEMBER TO SET THIS TO 100 MILLISECONDS BEFORE
                     // SUBMITTING.
-                    this_thread::sleep_for(chrono::milliseconds(0));
+                    // this_thread::sleep_for(chrono::milliseconds(100));
                     ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
                 }
             } else {
