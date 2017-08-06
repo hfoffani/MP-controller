@@ -75,7 +75,6 @@ public:
             fg[0] += 10*CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
         }
 
-
         // Setup Constraints
         fg[1 + x_start] = vars[x_start];
         fg[1 + y_start] = vars[y_start];
@@ -122,8 +121,10 @@ public:
             AD<double> delta0 = vars[delta_start + t - 1];
             AD<double> a0 = vars[a_start + t - 1];
 
-            AD<double> f0 = coeffs[0] + coeffs[1] * x0;
-            AD<double> psides0 = CppAD::atan(coeffs[1]);
+            AD<double> f0 = coeffs[0] + coeffs[1] * x0 +
+                            coeffs[2] * x0 * x0 + coeffs[3] * x0 * x0 * x0;
+            AD<double> psides0 = CppAD::atan(
+                            coeffs[1] + 2 * coeffs[2] * x0 + 3 * coeffs[3] * x0 * x0);
 
             // Here's `x` to get you started.
             // The idea here is to constraint this value to be 0.
@@ -139,9 +140,9 @@ public:
             fg[1 + psi_start + t] = psi1 - (psi0 + v0 * delta0 / Lf * dt);
             fg[1 + v_start + t] = v1 - (v0 + a0 * dt);
             fg[1 + cte_start + t] =
-            cte1 - ((f0 - y0) + (v0 * CppAD::sin(epsi0) * dt));
+                    cte1 - ((f0 - y0) + (v0 * CppAD::sin(epsi0) * dt));
             fg[1 + epsi_start + t] =
-            epsi1 - ((psi0 - psides0) + v0 * delta0 / Lf * dt);
+                    epsi1 - ((psi0 - psides0) + v0 * delta0 / Lf * dt);
         }
     }
 };
