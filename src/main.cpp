@@ -104,10 +104,6 @@ int main() {
                         ptsy_car_co[i] = difx * sin(-psi) + dify * cos(-psi);
                     }
 
-                    // convert from a vector of doubles to a Map of Eigen Vectors.
-                    // Eigen::Map<Eigen::VectorXd> pstx_transform(&ptsx[0], 6);
-                    // Eigen::Map<Eigen::VectorXd> psty_transform(&ptsy[0], 6);
-
                     // fit the poliynomial and get the coefficients.
                     auto coeffs = polyfit(ptsx_car_co, ptsy_car_co, 3);
 
@@ -121,7 +117,7 @@ int main() {
                     /*
                      * : Calculate steering angle and throttle using MPC.
                      *
-                     * Both are in between [-1, 1]. XXX
+                     * Both are in between [-1, 1].
                      *
                      */
 
@@ -148,6 +144,13 @@ int main() {
                     //Display the MPC predicted trajectory
                     vector<double> mpc_x_vals;
                     vector<double> mpc_y_vals;
+                    for (int i = 2; i < mpc_vars.size(); i++) {
+                        if (i % 2 == 0) {
+                            mpc_x_vals.push_back(mpc_vars[i]);
+                        } else {
+                            mpc_y_vals.push_back(mpc_vars[i]);
+                        }
+                    }
 
                     //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
                     // the points in the simulator are connected by a Green line
@@ -158,6 +161,12 @@ int main() {
                     //Display the waypoints/reference line
                     vector<double> next_x_vals;
                     vector<double> next_y_vals;
+                    double poly_inc = Lf * 2; // one car length per point
+                    int num_points = 10;
+                    for (int i = 1; i < num_points; i++) {
+                        next_x_vals.push_back(poly_inc * i);
+                        next_y_vals.push_back(polyeval(coeffs, poly_inc * i));
+                    }
 
                     //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
                     // the points in the simulator are connected by a Yellow line
