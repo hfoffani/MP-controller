@@ -109,7 +109,7 @@ int main() {
                     // fit the poliynomial and get the coefficients.
                     auto coeffs = polyfit(pstx_transform, psty_transform, 3);
 
-                    // calculate cte and psi
+                    // calculate cte and epsi
                     // the true value of the error is the distance to the poly curve and
                     // this is a simplification.
                     auto cte = polyeval(coeffs, 0);
@@ -134,7 +134,7 @@ int main() {
 
                     // actuators
                     const double Lf = 2.67;
-                    steer_value = mpc_vars[0]/(deg2rad(25)*Lf);
+                    steer_value = - mpc_vars[0]/(deg2rad(25)); // (deg2rad(25)*Lf);
                     throttle_value = mpc_vars[1];
 
                     json msgJson;

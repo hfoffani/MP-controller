@@ -24,7 +24,7 @@ const double Lf = 2.67;
 // These are the values that we try reach and mantain.
 const double ref_cte = 0;
 const double ref_epsi = 0;
-const double ref_v = 30;
+const double ref_v = 50;
 
 // CppAD expects everything a one dimensional vector.
 // Here are some predefined constants of offsets to improve readability.
@@ -37,6 +37,18 @@ const size_t cte_start = v_start + N;
 const size_t epsi_start = cte_start + N;
 const size_t delta_start = epsi_start + N;
 const size_t a_start = delta_start + N - 1;
+
+
+// weigths for deviation from reference
+const double w_ref_cte   = 300;     // 2000
+const double w_ref_epsi  = 50;      // 2000
+const double w_ref_v     = 1;
+// weight for minimizing actuators
+const double w_act_delta = 200;     // 5
+const double w_act_a     = 50;      // 5
+// weights for smoothing
+const double w_dif_delta = 5000;    // 200
+const double w_dif_a     = 100;     // 10
 
 
 class FG_eval {
@@ -56,23 +68,23 @@ public:
 
         // add cost proportional to square of deviation of reference values.
         for (int t = 0; t < N; t++) {
-            fg[0] += 2000*CppAD::pow(vars[cte_start + t] - ref_cte, 2);
-            fg[0] += 2000*CppAD::pow(vars[epsi_start + t] - ref_epsi, 2);
-            fg[0] += CppAD::pow(vars[v_start + t] - ref_v, 2);
+            fg[0] += w_ref_cte  * CppAD::pow(vars[cte_start + t] - ref_cte, 2);
+            fg[0] += w_ref_epsi * CppAD::pow(vars[epsi_start + t] - ref_epsi, 2);
+            fg[0] += w_ref_v    * CppAD::pow(vars[v_start + t] - ref_v, 2);
         }
 
         // Minimize the use of actuators.
         // favor smoothing by penalizing big values to the actuators.
         for (int t = 0; t < N - 1; t++) {
-            fg[0] += 5*CppAD::pow(vars[delta_start + t], 2);
-            fg[0] += 5*CppAD::pow(vars[a_start + t], 2);
+            fg[0] += w_act_delta * CppAD::pow(vars[delta_start + t], 2);
+            fg[0] += w_act_a     * CppAD::pow(vars[a_start + t], 2);
         }
 
         // Minimize the value gap between sequential actuations.
         // penalize jerking. (first derivative)
         for (int t = 0; t < N - 2; t++) {
-            fg[0] += 200*CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
-            fg[0] += 10*CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
+            fg[0] += w_dif_delta * CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
+            fg[0] += w_dif_a     * CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
         }
 
         // Setup Constraints
