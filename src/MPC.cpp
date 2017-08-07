@@ -42,7 +42,7 @@ const size_t a_start = delta_start + N - 1;
 // weigths for deviation from reference
 const double w_ref_cte   = 300;     // 2000
 const double w_ref_epsi  = 50;      // 2000
-const double w_ref_v     = 1;
+const double w_ref_v     = 20;
 // weight for minimizing actuators
 const double w_act_delta = 200;     // 5
 const double w_act_a     = 50;      // 5
@@ -99,19 +99,6 @@ public:
         // So fg[1 + psi_start] is where we store the initial value of psi.
         // Finally, fg[1 + psi_start + t] is reserved for the tth of N values of
         // psi that the solver computes.
-        for (int t = 1; t < N ; t++) {
-            // psi, v, delta at time t
-            AD<double> psi0 = vars[psi_start + t - 1];
-            AD<double> v0 = vars[v_start + t - 1];
-            AD<double> delta0 = vars[delta_start + t - 1];
-
-            // psi at time t+1
-            AD<double> psi1 = vars[psi_start + t];
-
-            // how psi changes
-            fg[1 + psi_start + t] = psi1 - (psi0 + v0 * delta0 / Lf * dt);
-        }
-
         for (int t = 1; t < N; t++) {
             // The state at time t+1 .
             AD<double> x1 = vars[x_start + t];
@@ -167,7 +154,7 @@ MPC::~MPC() {}
 
 vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
     bool ok = true;
-    size_t i;
+    // size_t i;
     typedef CPPAD_TESTVECTOR(double) Dvector;
 
     double x = state[0];
@@ -203,10 +190,14 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
         vars_upperbound[i] = 1e10;
     }
     // for the actuators, special values
-    vars_lowerbound[delta_start] = - Lf * 25 * M_PI / 180;
-    vars_upperbound[delta_start] = Lf * 25 * M_PI / 180;
-    vars_lowerbound[a_start] = -1.0;
-    vars_upperbound[a_start] = 1.0;
+    for (int i = delta_start; i < a_start; i++) {
+        vars_lowerbound[i] = - Lf * 25 * M_PI / 180;
+        vars_upperbound[i] = Lf * 25 * M_PI / 180;
+    }
+    for (int i = a_start; i < n_vars; i++) {
+        vars_lowerbound[i] = -0.5;
+        vars_upperbound[i] = 1.0;
+    }
 
     // Lower and upper limits for the constraints
     // Should be 0 besides initial state.
