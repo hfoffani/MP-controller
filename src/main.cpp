@@ -100,8 +100,8 @@ int main() {
                     for (int i = 0; i < ptsx.size(); i++) {
                         double difx = ptsx[i] - px;
                         double dify = ptsy[i] - py;
-                        ptsx_car_co[i] = difx * cos(psi) - dify * sin(psi);
-                        ptsy_car_co[i] = difx * sin(psi) + dify * cos(psi);
+                        ptsx_car_co[i] = difx * cos(-psi) - dify * sin(-psi);
+                        ptsy_car_co[i] = difx * sin(-psi) + dify * cos(-psi);
                     }
 
                     // convert from a vector of doubles to a Map of Eigen Vectors.
