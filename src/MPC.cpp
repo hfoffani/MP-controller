@@ -40,15 +40,15 @@ const size_t a_start = delta_start + N - 1;
 
 
 // weigths for deviation from reference
-const double w_ref_cte   = 2000; // 300;     // 2000
-const double w_ref_epsi  = 2000; // 50;      // 2000
-const double w_ref_v     = 1;   // 20;
+const double w_ref_cte   = 5000;
+const double w_ref_epsi  = 1000;
+const double w_ref_v     = 1;
 // weight for minimizing actuators
-const double w_act_delta = 10;  // 200;     // 5
-const double w_act_a     = 10;  // 50;      // 5
+const double w_act_delta = 1;
+const double w_act_a     = 1;
 // weights for smoothing
-const double w_dif_delta = 100; // 5000;    // 200
-const double w_dif_a     = 10;  // 100;     // 10
+const double w_dif_delta = 1000;
+const double w_dif_a     = 10;
 
 
 class FG_eval {
