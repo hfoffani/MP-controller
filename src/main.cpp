@@ -95,19 +95,21 @@ int main() {
                     // convert coordinates to car reference.
                     // because the car has a main direction of move (forward)
                     // it makes the polynomial fit easier and faster to calculate.
+                    Eigen::VectorXd ptsx_car_co(ptsx.size());
+                    Eigen::VectorXd ptsy_car_co(ptsx.size());
                     for (int i = 0; i < ptsx.size(); i++) {
-                        auto shift_x = ptsx[i] - px;
-                        auto shift_y = ptsy[i] - py;
-                        ptsx[i] = shift_x * cos(0-psi) - shift_y * sin(0-psi);
-                        ptsy[i] = shift_x * sin(0-psi) - shift_y * cos(0-psi);
+                        double difx = ptsx[i] - px;
+                        double dify = ptsy[i] - py;
+                        ptsx_car_co[i] = difx * cos(psi) - dify * sin(psi);
+                        ptsy_car_co[i] = difx * sin(psi) + dify * cos(psi);
                     }
 
                     // convert from a vector of doubles to a Map of Eigen Vectors.
-                    Eigen::Map<Eigen::VectorXd> pstx_transform(&ptsx[0], 6);
-                    Eigen::Map<Eigen::VectorXd> psty_transform(&ptsy[0], 6);
+                    // Eigen::Map<Eigen::VectorXd> pstx_transform(&ptsx[0], 6);
+                    // Eigen::Map<Eigen::VectorXd> psty_transform(&ptsy[0], 6);
 
                     // fit the poliynomial and get the coefficients.
-                    auto coeffs = polyfit(pstx_transform, psty_transform, 3);
+                    auto coeffs = polyfit(ptsx_car_co, ptsy_car_co, 3);
 
                     // calculate cte and epsi
                     // the true value of the error is the distance to the poly curve and
@@ -134,7 +136,7 @@ int main() {
 
                     // actuators
                     const double Lf = 2.67;
-                    steer_value = - mpc_vars[0]/(deg2rad(25)); // (deg2rad(25)*Lf);
+                    steer_value = - mpc_vars[0] / (deg2rad(25)*Lf);
                     throttle_value = mpc_vars[1];
 
                     json msgJson;
