@@ -24,7 +24,7 @@ const double Lf = 2.67;
 // These are the values that we try reach and mantain.
 const double ref_cte = 0;
 const double ref_epsi = 0;
-const double ref_v = 50;
+const double ref_v = 100;
 
 // CppAD expects everything a one dimensional vector.
 // Here are some predefined constants of offsets to improve readability.
@@ -40,15 +40,15 @@ const size_t a_start = delta_start + N - 1;
 
 
 // weigths for deviation from reference
-const double w_ref_cte   = 300;     // 2000
-const double w_ref_epsi  = 50;      // 2000
-const double w_ref_v     = 20;
+const double w_ref_cte   = 2000; // 300;     // 2000
+const double w_ref_epsi  = 2000; // 50;      // 2000
+const double w_ref_v     = 1;   // 20;
 // weight for minimizing actuators
-const double w_act_delta = 200;     // 5
-const double w_act_a     = 50;      // 5
+const double w_act_delta = 10;  // 200;     // 5
+const double w_act_a     = 10;  // 50;      // 5
 // weights for smoothing
-const double w_dif_delta = 5000;    // 200
-const double w_dif_a     = 100;     // 10
+const double w_dif_delta = 100; // 5000;    // 200
+const double w_dif_a     = 10;  // 100;     // 10
 
 
 class FG_eval {
@@ -189,11 +189,12 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
         vars_lowerbound[i] = -1e10;
         vars_upperbound[i] = 1e10;
     }
-    // for the actuators, special values
+    // for the steering +-25 degrees in radians
     for (int i = delta_start; i < a_start; i++) {
-        vars_lowerbound[i] = - Lf * 25 * M_PI / 180;
-        vars_upperbound[i] = Lf * 25 * M_PI / 180;
+        vars_lowerbound[i] = - 25 * M_PI / 180;
+        vars_upperbound[i] = 25 * M_PI / 180;
     }
+    // for the throttle +-1;
     for (int i = a_start; i < n_vars; i++) {
         vars_lowerbound[i] = -0.5;
         vars_upperbound[i] = 1.0;
