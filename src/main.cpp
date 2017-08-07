@@ -121,17 +121,35 @@ int main() {
                      *
                      */
 
-                    // current state
+                    const double Lf = 2.67;
+                    const double latency = 0.1; // 100 ms.
+
+                    // With latency we need to aproximate the current state given the
+                    // last measurements. Use a kinematic model.
                     double steer_value = j[1]["steering_angle"];
+                    // we use throttle as the acceleration which is an aproximation
                     double throttle_value = j[1]["throttle"];
+
+                    // in car coordinates x,y,psi are zeros.
+                    // and sin(psi) == 0 and cos(psi) == 1.
+                    // we let the compiler to simplify the expressions.
+                    // x = x + v*cos(psi)*latency
+                    const double px_aprox = 0.0 + v * 1.0 * latency;
+                    // y = y + v*sin(psi)*latency
+                    const double py_aprox = 0.0 + v * 0.0 * latency;
+                    // psi = psi + v * delta / Lf * latency
+                    const double psi_aprox = 0.0 - v * steer_value / Lf * latency;
+                    // v = v + acceleration * latency
+                    const double v_aprox = v + throttle_value * latency;
+                    const double cte_aprox = cte + v * sin(epsi) * latency;
+                    const double epsi_aprox = epsi + psi_aprox;
                     Eigen::VectorXd state(6);
-                    state << 0, 0, 0, v, cte, epsi;
+                    state << px_aprox, py_aprox, psi_aprox, v_aprox, cte_aprox, epsi_aprox;
 
                     // solve the polynomial
                     auto mpc_vars = mpc.Solve(state, coeffs);
 
                     // actuators
-                    const double Lf = 2.67;
                     steer_value = - mpc_vars[0] / (deg2rad(25)*Lf);
                     throttle_value = mpc_vars[1];
 
@@ -162,7 +180,7 @@ int main() {
                     vector<double> next_x_vals;
                     vector<double> next_y_vals;
                     double poly_inc = Lf * 2; // one car length per point
-                    int num_points = 10;
+                    int num_points = 15;
                     for (int i = 1; i < num_points; i++) {
                         next_x_vals.push_back(poly_inc * i);
                         next_y_vals.push_back(polyeval(coeffs, poly_inc * i));
@@ -186,7 +204,7 @@ int main() {
                     //
                     // NOTE: REMEMBER TO SET THIS TO 100 MILLISECONDS BEFORE
                     // SUBMITTING.
-                    // this_thread::sleep_for(chrono::milliseconds(100));
+                    this_thread::sleep_for(chrono::milliseconds(100));
                     ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
                 }
             } else {
