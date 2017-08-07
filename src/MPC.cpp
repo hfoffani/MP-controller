@@ -196,7 +196,7 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
     }
     // for the throttle +-1;
     for (int i = a_start; i < n_vars; i++) {
-        vars_lowerbound[i] = -0.5;
+        vars_lowerbound[i] = -1.0;
         vars_upperbound[i] = 1.0;
     }
 
