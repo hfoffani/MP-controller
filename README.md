@@ -19,13 +19,14 @@ XXX Previous values
 
 N | dt | Result
 --|----|-------
-25 | 1.0 | x
-25 | 0.5 | x
-25 | 0.2 | x
-25 | 0.1 | x
-20 | 0.1 | x
-15 | 0.1 | x
-5 | 0.1 | x
+25 | 1.0 | The car starts and stop continuosly.
+25 | 0.5 | The forward movement is smoother but it goes off lane.
+25 | 0.2 | Completes the circuit but the car breaks too much.
+25 | 0.1 | The car move is steady but it goes off road.
+20 | 0.1 | Better than 25 but still touches the kerb/ledge.
+15 | 0.1 | OK.
+10 | 0.1 | OK.
+5 | 0.1 | The car goes off lane almost immediatly.
 
 ### MPC Preprocessing
 
