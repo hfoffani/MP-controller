@@ -3,17 +3,34 @@
 
 A C++ implementation of a MP Controller.
 
-XXX blah blah
+XXX Description
 
-### Algorithm Explanation
 
-XXX blah blah
+### The Model
 
-**Video Results**
+XXX Describe the model in detail.
+XXX Include state, actuators and update equations.
 
-### Final Hyperparameters
 
-XXX blah blah
+### Time Step Length and Elapsed Duration
+
+XXX Final values
+XXX Previous values
+
+
+### MPC Preprocessing
+
+XXX Waypoints preprocessing
+
+
+### Model Predictive Control with Latency
+
+XXX Latency
+
+
+### Video Results
+
+XXX Video
 
 
 ---
