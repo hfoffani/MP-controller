@@ -71,14 +71,16 @@ int main(int argc, char *argv[]) {
     // MPC is initialized here!
     MPC mpc;
     bool hide_lines = false;
+    bool silent = false;
 
-    h.onMessage([&mpc, &hide_lines](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
-                                    uWS::OpCode opCode) {
+    h.onMessage([&mpc, &hide_lines, &silent](
+                uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
         // "42" at the start of the message means there's a websocket message event.
         // The 4 signifies a websocket message
         // The 2 signifies a websocket event
         string sdata = string(data).substr(0, length);
-        cout << sdata << endl;
+        if (!silent)
+            std::cout << sdata << std::endl;
         if (sdata.size() > 2 && sdata[0] == '4' && sdata[1] == '2') {
             string s = hasData(sdata);
             if (s != "") {
@@ -199,7 +201,8 @@ int main(int argc, char *argv[]) {
 
 
                     auto msg = "42[\"steer\"," + msgJson.dump() + "]";
-                    std::cout << msg << std::endl;
+                    if (!silent)
+                        std::cout << msg << std::endl;
                     // Latency
                     // The purpose is to mimic real driving conditions where
                     // the car does actuate the commands instantly.
@@ -245,11 +248,14 @@ int main(int argc, char *argv[]) {
     });
 
     int c;
-    while ((c = getopt(argc, argv, "n")) != -1) {
+    while ((c = getopt(argc, argv, "ns")) != -1) {
         switch(c) {
             case 'n':
                 hide_lines = true;
-                cout << "Hiding lines" << endl;
+                break;
+            case 's':
+                silent = true;
+                mpc.set_silent(silent);
                 break;
         }
     }

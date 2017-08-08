@@ -7,14 +7,20 @@
 using namespace std;
 
 class MPC {
- public:
-  MPC();
+    private:
+        bool silent = false;
 
-  virtual ~MPC();
+    public:
+        MPC();
 
-  // Solve the model given an initial state and polynomial coefficients.
-  // Return the first actuatotions.
-  vector<double> Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs);
+        virtual ~MPC();
+
+        // Solve the model given an initial state and polynomial coefficients.
+        // Return the first actuatotions.
+        vector<double> Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs);
+
+        // Sets the silent flag.
+        void set_silent(bool silent);
 };
 
 #endif /* MPC_H */

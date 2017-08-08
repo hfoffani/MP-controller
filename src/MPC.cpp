@@ -145,6 +145,10 @@ public:
 MPC::MPC() {}
 MPC::~MPC() {}
 
+void MPC::set_silent(bool silent) {
+    this->silent = silent;
+}
+
 vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
     bool ok = true;
     // size_t i;
@@ -251,8 +255,10 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
     ok &= solution.status == CppAD::ipopt::solve_result<Dvector>::success;
 
     // Cost
-    auto cost = solution.obj_value;
-    std::cout << "Cost " << cost << std::endl;
+    if (!silent) {
+        auto cost = solution.obj_value;
+        std::cout << "Cost " << cost << std::endl;
+    }
 
     // : Return the first actuator values. The variables can be accessed with
     // `solution.x[i]`.
