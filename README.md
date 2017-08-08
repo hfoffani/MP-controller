@@ -4,11 +4,11 @@
 A C++ implementation of a Model Predictive Controller.
 
 The MP controllers are very popular in different industries
-because they allow to handle multivariable problems, are
+because they allow handling multivariable problems, are
 aware of actuator limitations, allows operation close to constraints
 and the specification of objectives is flexible.
 
-This project implements a MPC to drive a car autonomously in
+This project implements an MPC to drive a car autonomously in
 the Udacity simulator.
 
 
@@ -18,16 +18,16 @@ The algorithm for a [Model Predictive Controller](#acknowledgments)
 follows this general structure:
 
 * At each sampling instance, a predictive controller:
-    1. Takes a measurement of the system state or output
+    1. Measures the system state or output
     2. Computes a sequence of inputs over a finite time horizon
         * Using an internal model to predict states at future times
-        * Minimising some cost function of future states and inputs
+        * Minimizing some cost function of future states and inputs
         * While not violating any constraints on states and inputs
     3. Implements the first part of the optimal sequence (discarding the rest)
 * Each new measurement is used to calculate a new input
 * Prediction horizon recedes with time
 
-This project consider the car as an object moving in a 2D plane so
+This project considers the car as an object moving in a 2D plane, so
 the model consists of the _x_ and _y_ position, the velocity _v_ and the
 heading angle _Ψ_.
 
@@ -35,14 +35,14 @@ Hence the state is represented by:
 
 ![State equation](imgs/state.gif)
 
-where _cte_ is the error with respect to ideal path and _epsi_ the
+where _cte_ is the error with respect to the ideal path and _epsi_ the
 error with respect to the heading.
 
 The actuators (steering angle and throttle) are constrained by
 
 ![Actuators Constraints](imgs/constraints.gif)
 
-We model the gas and break pedal with only one actuator which is
+We model the gas and brake pedal with only one actuator which is
 a realistic simplification.
 
 The equations set for the predicted states are:
@@ -52,7 +52,7 @@ The equations set for the predicted states are:
 
 ### Time Step Length and Elapsed Duration
 
-The values for `N` and `dt` that I have chosen are 25 and 0.1 respectevely.
+The values for `N` and `dt` that I have chosen are 25 and 0.1 respectively.
 They allow the car to complete the track with a smooth forward movement
 and no jerking.
 
@@ -62,48 +62,48 @@ N | dt | Result
 --|----|-------
 25 | 1.0 | The car starts and stop continuosly.
 25 | 0.5 | The forward movement is smoother but it goes off lane.
-25 | 0.2 | Completes the circuit but the car breaks too much.
+25 | 0.2 | Completes the circuit but the car brakes too much.
 25 | 0.1 | The car move is steady but it goes off road.
 20 | 0.1 | Better than 25 but still touches the kerb/ledge.
 15 | 0.1 | OK.
 10 | 0.1 | OK.
-5 | 0.1 | The car goes off lane almost immediatly.
+5 | 0.1 | The car goes off the lane almost immediately.
 
 
 ### Cost Function Weights
 
-After some experimentation I decided to heavily penalize
+After some experimentation, I decided to heavily penalize
 the _cte_ error with a 5X value with respect to _epsi_.
 
-With this set of weights the car tends to go fast but
-breaks decisively when it needs to keep the center of
+With this set of weights, the car tends to go fast but
+decisively breaks when it needs to keep the center of
 the lane.
 
 
 ### MPC Preprocessing
 
 Converting the waypoints coordinates to a car reference
-simplifies the rest of the calcualtions a lot.
+simplifies the rest of the calculations a lot.
 
 To begin with, the current state (without considering
-latency) for the variables _x_, _y_ and _Ψ_ are zeros.
+latency) for the variables _x_, _y_, and _Ψ_ are zeros.
 
 This transformation is in the source code at `src/main.cpp:101`.
 
 
 ### Model Predictive Control with Latency
 
-In the real world the actuators have a delay. In this implementation
+In the real world, the actuators have a delay. In this implementation,
 the latency is simulated by sleeping the thread by 100ms.
 
 To account for this the model needs to predict the current
-state given the last measurements. A simple Kinematic model
-is effective enough for this delay.
+state given the last measurements. A mere Kinematic model
+is sufficient enough for this delay.
 
 ![Latency equations](imgs/latency.gif)
 
 This implementation does not receive the acceleration
-measurement from the simulator so it uses the throttle value
+measurement from the simulator, so it uses the throttle value
 which is a good approximation. The source code is at
 `src/main.cpp:130`.
 
