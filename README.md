@@ -14,8 +14,11 @@ XXX Include state, actuators and update equations.
 
 ### Time Step Length and Elapsed Duration
 
-XXX Final values
-XXX Previous values
+The values for `N` and `dt` that I have chosen are 25 and 0.1 respectevely.
+They allow the car to complete the track with a smooth forward movement
+and jerking.
+
+I tried different values for `N` and `dt`. In the following table I describe the results:
 
 N | dt | Result
 --|----|-------
