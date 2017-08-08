@@ -29,13 +29,13 @@ follows this general structure:
 
 This project consider the car as an object moving in a 2D plane so
 the model consists of the _x_ and _y_ position, the velocity _v_ and the
-heading angle Ψ.
+heading angle _Ψ_.
 
 Hence the state is represented by:
 
     XXX
 
-where XXX is the error with respect to ideal path and XXX the
+where _cte_ is the error with respect to ideal path and _epsi_ the
 error with respect to the heading.
 
 The actuators (steering angle and throttle) are constrained by
@@ -86,9 +86,9 @@ Converting the waypoints coordinates to a car reference
 simplifies the rest of the calcualtions a lot.
 
 To begin with, the current state (without considering
-latency) for the variables _x_, _y_ and XXX are zeros.
+latency) for the variables _x_, _y_ and _Ψ_ are zeros.
 
-This transformation is in the source code at src/main.cpp:101.
+This transformation is in the source code at `src/main.cpp:101`.
 
 
 ### Model Predictive Control with Latency
@@ -104,7 +104,8 @@ is effective enough for this delay.
 
 This implementation does not receive the acceleration
 measurement from the simulator so it uses the throttle value
-which is a good approximation.
+which is a good approximation. The source code is at
+`src/main.cpp:130`.
 
 
 ### Video Results
