@@ -33,21 +33,22 @@ heading angle _Ψ_.
 
 Hence the state is represented by:
 
-[State equation](imgs/state.gif)
+![State equation](imgs/state.gif)
 
 where _cte_ is the error with respect to ideal path and _epsi_ the
 error with respect to the heading.
 
 The actuators (steering angle and throttle) are constrained by
 
-[Actuators Constraints](imgs/constraints.gif)
+![Actuators Constraints](imgs/constraints.gif)
 
 We model the gas and break pedal with only one actuator which is
 a realistic simplification.
 
 The equations set for the predicted states are:
 
-[Model](imgs/model.gif)
+![Model](imgs/model.gif)
+
 
 ### Time Step Length and Elapsed Duration
 
@@ -99,7 +100,7 @@ To account for this the model needs to predict the current
 state given the last measurements. A simple Kinematic model
 is effective enough for this delay.
 
-[Latency equations](imgs/latency.gif)
+![Latency equations](imgs/latency.gif)
 
 This implementation does not receive the acceleration
 measurement from the simulator so it uses the throttle value
