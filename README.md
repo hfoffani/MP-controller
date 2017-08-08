@@ -17,6 +17,15 @@ XXX Include state, actuators and update equations.
 XXX Final values
 XXX Previous values
 
+N | dt | Result
+--|----|-------
+25 | 1.0 | x
+25 | 0.5 | x
+25 | 0.2 | x
+25 | 0.1 | x
+20 | 0.1 | x
+15 | 0.1 | x
+5 | 0.1 | x
 
 ### MPC Preprocessing
 
