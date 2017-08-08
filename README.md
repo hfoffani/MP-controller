@@ -1,22 +1,63 @@
 # MP Controller
 
 
-A C++ implementation of a MP Controller.
+A C++ implementation of a Model Predictive Controller.
 
-XXX Description
+The MP controllers are very popular in different industries
+because they allow to handle multivariable problems, are
+aware of actuator limitations, allows operation close to constraints
+and the specification of objectives is flexible.
+
+This project implements a MPC to drive a car autonomously in
+the Udacity simulator.
 
 
 ### The Model
 
-XXX Describe the model in detail.
-XXX Include state, actuators and update equations.
+The algorithm for a Model Predictive Controller can be described
+with the following steps: XXX
+
+* At each sampling instance, a predictive controller:
+    1. Takes a measurement of the system state or output
+    2. Computes a sequence of inputs over a finite time horizon
+        * Using an internal model to predict states at future times
+        * Minimising some cost function of future states and inputs
+        * While not violating any constraints on states and inputs
+    3. Implements the first part of the optimal sequence (discarding the rest)
+* Each new measurement is used to calculate a new input
+* Prediction horizon recedes with time
+
+This project consider the car as an object moving in a 2D plane so
+the model consists of the x and y position, the velocity v and the
+heading angle PHI XXX.
+
+Hence the state is represented by:
+
+    XXX
+
+where XXX is the error with respect to ideal path and XXX the
+error with respect to the heading.
+
+The actuators (steering angle and throttle) are constrained by
+
+    XXX
+
+We model the gas and break pedal with only one actuator which is
+a realistic simplification.
+
+The equations set for the predicted states are:
+
+    XXX
+
 
 
 ### Time Step Length and Elapsed Duration
 
+XXX Weights
+
 The values for `N` and `dt` that I have chosen are 25 and 0.1 respectevely.
 They allow the car to complete the track with a smooth forward movement
-and jerking.
+and no jerking.
 
 I tried different values for `N` and `dt`. In the following table I describe the results:
 
@@ -113,17 +154,23 @@ Not a dependency but read the [DATA.md](./DATA.md) for a description of the data
 
 Thanks to Udacity for the learning experience.
 
+Jan Maciejowski (jmm@eng.cam.ac.uk) from Cambridge University Engineering Department.
+
+
 ### License
 
 This project is published under the [Apache License](http://www.apache.org/licenses/LICENSE-2.0).
+
 
 ### Contributions
 
 I gratefully honor Pull Requests.
 Please, consider formatting the code with K&R style and four spaces tabs.
 
+
 ### Who do I talk to?
 
 For questions or requests post an issue here or tweet me at
 [@herchu](http://twitter.com/herchu)
+
 
