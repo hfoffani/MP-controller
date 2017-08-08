@@ -4,7 +4,7 @@
 A C++ implementation of a Model Predictive Controller.
 
 The MP controllers are very popular in different industries
-because they allow handling multivariable problems, are
+because they allow handling multi variable problems, are
 aware of actuator limitations, allows operation close to constraints
 and the specification of objectives is flexible.
 
@@ -96,8 +96,8 @@ This transformation is in the source code at `src/main.cpp:101`.
 In the real world, the actuators have a delay. In this implementation,
 the latency is simulated by sleeping the thread by 100ms.
 
-To account for this the model needs to predict the current
-state given the last measurements. A mere Kinematic model
+To account for this, the model needs to predict the current
+state given the last measurements. A small Kinematic model
 is sufficient enough for this delay.
 
 ![Latency equations](imgs/latency.gif)
