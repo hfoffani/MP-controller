@@ -65,14 +65,15 @@ Eigen::VectorXd polyfit(Eigen::VectorXd xvals, Eigen::VectorXd yvals,
     return result;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     uWS::Hub h;
 
     // MPC is initialized here!
     MPC mpc;
+    bool hide_lines = false;
 
-    h.onMessage([&mpc](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
-                       uWS::OpCode opCode) {
+    h.onMessage([&mpc, &hide_lines](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
+                                    uWS::OpCode opCode) {
         // "42" at the start of the message means there's a websocket message event.
         // The 4 signifies a websocket message
         // The 2 signifies a websocket event
@@ -162,11 +163,13 @@ int main() {
                     //Display the MPC predicted trajectory
                     vector<double> mpc_x_vals;
                     vector<double> mpc_y_vals;
-                    for (int i = 2; i < mpc_vars.size(); i++) {
-                        if (i % 2 == 0) {
-                            mpc_x_vals.push_back(mpc_vars[i]);
-                        } else {
-                            mpc_y_vals.push_back(mpc_vars[i]);
+                    if (!hide_lines) {
+                        for (int i = 2; i < mpc_vars.size(); i++) {
+                            if (i % 2 == 0) {
+                                mpc_x_vals.push_back(mpc_vars[i]);
+                            } else {
+                                mpc_y_vals.push_back(mpc_vars[i]);
+                            }
                         }
                     }
 
@@ -179,11 +182,13 @@ int main() {
                     //Display the waypoints/reference line
                     vector<double> next_x_vals;
                     vector<double> next_y_vals;
-                    double poly_inc = Lf * 2; // one car length per point
-                    int num_points = 15;
-                    for (int i = 1; i < num_points; i++) {
-                        next_x_vals.push_back(poly_inc * i);
-                        next_y_vals.push_back(polyeval(coeffs, poly_inc * i));
+                    if (!hide_lines) {
+                        double poly_inc = Lf * 2; // one car length per point
+                        int num_points = 15;
+                        for (int i = 1; i < num_points; i++) {
+                            next_x_vals.push_back(poly_inc * i);
+                            next_y_vals.push_back(polyeval(coeffs, poly_inc * i));
+                        }
                     }
 
                     //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
@@ -238,6 +243,16 @@ int main() {
         ws.close();
         std::cout << "Disconnected" << std::endl;
     });
+
+    int c;
+    while ((c = getopt(argc, argv, "n")) != -1) {
+        switch(c) {
+            case 'n':
+                hide_lines = true;
+                cout << "Hiding lines" << endl;
+                break;
+        }
+    }
 
     int port = 4567;
     if (h.listen(port)) {
