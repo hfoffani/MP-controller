@@ -1,0 +1,41 @@
+State
+
+[ x_1, y_1, \psi_1, v_1, cte_1, e\psi_1]
+
+
+Constraints
+
+\begin{align}
+\delta & \in [-25^{\circ}, 25^{\circ} ] \nonumber \\
+a & \in [-1,1] \nonumber
+\end{align}
+
+
+Model
+
+\begin{align}
+x_{t+1} & = x_t + v_t * cos(\psi_t) * dt \nonumber \\
+y_{t+1} & = y_t + v_t * sin(\psi_t) * dt \nonumber \\
+\psi_{t+1} & = \psi_t + \frac{v_t}{L_f} * \delta_t * dt \nonumber \\
+v_{t+1} & = v_t + a_t * dt \nonumber \\
+cte_{t+1} & = f(x_t) - y_t + v_t * sin(e\psi_t) * dt \nonumber \\
+e\psi_{t+1} &= \psi_t - {\psi}des_t + \frac{v_t}{L_f} * \delta_t * dt \nonumber
+\end{align}
+
+
+
+Cost
+
+J = \sum_{t=1}^{N}(cte_t - cte.ref)^2 + (e\psi_t - e\psi.ref)^2 + ...
+
+
+Latency
+
+\begin{align}
+x & = x + v * cos(\psi) * dt \nonumber \\
+y & = y + v * sin(\psi) * dt \nonumber \\
+\psi & = \psi + \frac{v}{L_f} * \delta * dt \nonumber \\
+v & = v + a * dt \nonumber
+\end{align}
+
+
