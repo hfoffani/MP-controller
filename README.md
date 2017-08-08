@@ -14,8 +14,8 @@ the Udacity simulator.
 
 ### The Model
 
-The algorithm for a Model Predictive Controller can be described
-with the following steps: XXX
+The algorithm for a [Model Predictive Controller](#acknowledgments)
+follows this general structure:
 
 * At each sampling instance, a predictive controller:
     1. Takes a measurement of the system state or output
@@ -28,8 +28,8 @@ with the following steps: XXX
 * Prediction horizon recedes with time
 
 This project consider the car as an object moving in a 2D plane so
-the model consists of the x and y position, the velocity v and the
-heading angle PHI XXX.
+the model consists of the _x_ and _y_ position, the velocity _v_ and the
+heading angle Ψ.
 
 Hence the state is represented by:
 
@@ -50,10 +50,7 @@ The equations set for the predicted states are:
     XXX
 
 
-
 ### Time Step Length and Elapsed Duration
-
-XXX Weights
 
 The values for `N` and `dt` that I have chosen are 25 and 0.1 respectevely.
 They allow the car to complete the track with a smooth forward movement
@@ -72,19 +69,49 @@ N | dt | Result
 10 | 0.1 | OK.
 5 | 0.1 | The car goes off lane almost immediatly.
 
+
+### Cost Function Weights
+
+After some experimentation I decided to heavily penalize
+the _cte_ error with a 5X value with respect to _epsi_.
+
+With this set of weights the car tends to go fast but
+breaks decisively when it needs to keep the center of
+the lane.
+
+
 ### MPC Preprocessing
 
-XXX Waypoints preprocessing
+Converting the waypoints coordinates to a car reference
+simplifies the rest of the calcualtions a lot.
+
+To begin with, the current state (without considering
+latency) for the variables _x_, _y_ and XXX are zeros.
+
+This transformation is in the source code at src/main.cpp:101.
 
 
 ### Model Predictive Control with Latency
 
-XXX Latency
+In the real world the actuators have a delay. In this implementation
+the latency is simulated by sleeping the thread by 100ms.
+
+To account for this the model needs to predict the current
+state given the last measurements. A simple Kinematic model
+is effective enough for this delay.
+
+    XXX Latency
+
+This implementation does not receive the acceleration
+measurement from the simulator so it uses the throttle value
+which is a good approximation.
 
 
 ### Video Results
 
-XXX Video
+Here is a video recording of a simulator run:
+
+[![Click to view!](https://img.youtube.com/vi/zxiGR3D2-KA/0.jpg)](https://www.youtube.com/watch?v=zxiGR3D2-KA)
 
 
 ---
@@ -151,8 +178,6 @@ Not a dependency but read the [DATA.md](./DATA.md) for a description of the data
 ---
 
 ### Acknowledgments
-
-Thanks to Udacity for the learning experience.
 
 Jan Maciejowski (jmm@eng.cam.ac.uk) from Cambridge University Engineering Department.
 
