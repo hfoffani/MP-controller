@@ -49,6 +49,10 @@ The equations set for the predicted states are:
 
 ![Model](imgs/model.gif)
 
+If δ is positive we rotate counter-clockwise, or turn left. In the simulator
+however, a positive value implies a right turn and a negative value implies a left turn. 
+Hence in line src/main.cpp:156 the steering value is negated before sending it back to the server.
+
 
 ### Time Step Length and Elapsed Duration
 
